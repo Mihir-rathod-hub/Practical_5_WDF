@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events & Student Profiles</title>
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: #f2f7fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+
+  header {
+    text-align: center;
+    padding: 30px 10px;
+    background: linear-gradient(to right, #89f7fe, #66a6ff);
+    color: white;
+    font-size: 2em;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    padding: 40px 20px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    width: 300px;
+    padding: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #555;
+  }
+
+  .item {
+    padding: 12px 15px;
+    margin: 8px 0;
+    border-radius: 10px;
+    background: #e3f2fd;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+
+  .item:hover {
+    background: #bbdefb;
+  }
+
+  .student-card {
+    padding: 15px;
+    border-radius: 12px;
+    background: #fff0f5;
+    margin: 10px 0;
+    transition: background 0.3s;
+  }
+
+  .student-card:hover {
+    background: #ffe4f0;
+  }
+
+  .student-card p {
+    margin: 5px 0;
+  }
+
+  .pagination {
+    text-align: center;
+    margin-top: 15px;
+  }
+
+  .pagination button {
+    padding: 6px 12px;
+    margin: 3px;
+    border: none;
+    border-radius: 6px;
+    background: #66a6ff;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.3s;
+  }
+
+  .pagination button:hover {
+    background: #89f7fe;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    background: #66a6ff;
+    color: white;
+    font-weight: 500;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<header>Events & Student Profiles</header>
+
+<main>
+  <div class="card">
+    <h2>Upcoming Events</h2>
+    <div id="event-list"></div>
+    <div class="pagination" id="eventsPagination"></div>
+  </div>
+
+  <div class="card">
+    <h2>Student Profiles</h2>
+    <div id="student-list"></div>
+    <div class="pagination" id="studentsPagination"></div>
+  </div>
+</main>
+
+<footer>&copy; 2025 College Portal</footer>
+
+<script>
+  const events = [
+    { name: "Tech Fest", date: "10-07-2025" },
+    { name: "Sppoural", date: "17-01-2025" },
+    { name: "DJ Night", date: "20-02-2025" },
+    { name: "Science Fair", date: "03-03-2025" },
+    { name: "Hackathon", date: "15-04-2025" },
+    { name: "Cultural Fest", date: "25-05-2025" }
+  ];
+
+  const students = [
+    { name: "Mihir", branch: "CSE", year: "2025" },
+    { name: "Varshil", branch: "CE", year: "2024" },
+    { name: "Param", branch: "ME", year: "2023" },
+    { name: "Jay", branch: "ECE", year: "2022" },
+    { name: "Himanshu", branch: "IT", year: "2021" },
+    { name: "Bhavik", branch: "BCA", year: "2020" }
+  ];
+
+  const perPage = 2;
+
+  function paginate(array, page) {
+    return array.slice((page - 1) * perPage, page * perPage);
+  }
+
+  function renderEvents(page) {
+    const list = document.getElementById('event-list');
+    list.innerHTML = '';
+    paginate(events, page).forEach(e => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.textContent = `${e.name} - ${e.date}`;
+      list.appendChild(div);
+    });
+    renderEventPagination(page);
+  }
+
+  function renderStudents(page) {
+    const list = document.getElementById('student-list');
+    list.innerHTML = '';
+    paginate(students, page).forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'student-card';
+      div.innerHTML = `
+        <p><strong>Name:</strong> ${s.name}</p>
+        <p><strong>Branch:</strong> ${s.branch}</p>
+        <p><strong>Year:</strong> ${s.year}</p>
+      `;
+      list.appendChild(div);
+    });
+    renderStudentPagination(page);
+  }
+
+  function renderEventPagination(current) {
+    const total = Math.ceil(events.length / perPage);
+    const container = document.getElementById('eventsPagination');
+    container.innerHTML = `
+      <button id="prevEvent">Prev</button>
+      <span> ${current}/${total} </span>
+      <button id="nextEvent">Next</button>
+    `;
+    document.getElementById('prevEvent').onclick = () => renderEvents(current - 1 < 1 ? total : current - 1);
+    document.getElementById('nextEvent').onclick = () => renderEvents(current + 1 > total ? 1 : current + 1);
+  }
+
+  function renderStudentPagination(current) {
+    const total = Math.ceil(students.length / perPage);
+    const container = document.getElementById('studentsPagination');
+    container.innerHTML = `
+      <button id="prevStudent">Prev</button>
+      <span> ${current}/${total} </span>
+      <button id="nextStudent">Next</button>
+    `;
+    document.getElementById('prevStudent').onclick = () => renderStudents(current - 1 < 1 ? total : current - 1);
+    document.getElementById('nextStudent').onclick = () => renderStudents(current + 1 > total ? 1 : current + 1);
+  }
+
+  // Initial render
+  renderEvents(1);
+  renderStudents(1);
+</script>
+
+</body>
+</html>
